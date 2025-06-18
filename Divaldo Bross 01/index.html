@@ -470,7 +470,7 @@
             playerJumpRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20dir.png',
             playerJumpLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20esq.png',
             spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
-            platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma.png',
+            platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma01.png',
             bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
             ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png',
 			router: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/ROTEADOR.png', // ATUALIZAÇÃO: Nova imagem para 'box'
@@ -669,12 +669,24 @@
             
             player.onGround = false;
             platforms.forEach(platform => {
-                if ( player.velocity.y >= 0 && player.position.y + player.height <= platform.position.y && player.position.y + player.height + player.velocity.y >= platform.position.y && player.position.x + player.width > platform.position.x && player.position.x < platform.position.x + platform.width) {
-                    player.velocity.y = 0;
-                    player.position.y = platform.position.y - player.height;
-                    player.onGround = true;
-                }
-            });
+			const nextBottom = player.position.y + player.height + player.velocity.y;
+			const platformTop = platform.position.y;
+
+			const isFalling = player.velocity.y >= 0;
+			const withinXRange =
+			player.position.x + player.width > platform.position.x &&
+			player.position.x < platform.position.x + platform.width;
+
+			const willCollide =
+			player.position.y + player.height <= platformTop &&
+			nextBottom >= platformTop;
+
+			if (isFalling && withinXRange && willCollide) {
+			player.velocity.y = 0;
+			player.position.y = platform.position.y - player.height;
+			player.onGround = true;
+			}
+});
 
             platforms.forEach(p => p.draw());
             equipments.forEach(e => e.draw());
