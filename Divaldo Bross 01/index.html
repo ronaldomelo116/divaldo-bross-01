@@ -409,9 +409,16 @@
         let currentPlayerSpeed = BASE_PLAYER_SPEED;
         let player, platforms, equipments;
         let score = 0, equipmentCollected = 0, gameOver = false, isPaused = false, timeLeft, timerInterval;
-        let lastPlatformY, lastPlatformX;
+        let floatingTexts = [];
+		let lastPlatformY, lastPlatformX;
         let cameraY = 0;
-        
+		
+        const itemScores = {
+		ont: 200,       // Caixa Fiberhome
+		box: 150,       // Roteador
+		spool: 100      // Bobina de drop
+		};
+
         const keys = { right: { pressed: false }, left: { pressed: false } };
 
         const images = {};
@@ -582,7 +589,25 @@
             }
             messageBox.classList.remove('hidden');
         }
-        
+        //animação de pontos subindo
+		function drawFloatingTexts() {
+		// Remove textos que já sumiram 
+		floatingTexts = floatingTexts.filter(t => t.opacity > 0);
+
+		// Desenha os textos restantes
+		floatingTexts.forEach(text => {
+			ctx.save();
+			ctx.globalAlpha = text.opacity; // Transparência
+			ctx.fillStyle = text.color;     // Cor (verde)
+			ctx.font = 'bold 16px Arial';   // Fonte
+			ctx.fillText(text.text, text.x, text.y);
+			ctx.restore();
+
+        // Faz o texto subir e sumir
+        text.y -= 0.5;
+        text.opacity -= 0.01;
+			});
+		}
         let animationFrameId;
         function animate() {
             animationFrameId = requestAnimationFrame(animate);
@@ -622,9 +647,21 @@
             equipments.forEach((item) => { 
                 if (item && !item.collected && player.position.x < item.position.x + item.width && player.position.x + player.width > item.position.x && player.position.y < item.position.y + item.height && player.position.y + player.height > item.position.y) { 
                     item.collected = true; 
-                    score += 100; 
-                    equipmentCollected++; 
-                    updateUI();
+                    const itemValue = itemScores[item.type] || 100; // valor padrão se não encontrar
+					score += itemValue;
+					equipmentCollected++; 
+					updateUI();
+
+					// Adiciona um texto flutuante quando pega o item
+					floatingTexts.push({
+					text: `+${itemValue}`,
+					x: item.position.x,
+					y: item.position.y - 10,
+					opacity: 1,
+					color: '#00FF00' // Verde
+			});
+
+
                 } 
             });
             
@@ -636,7 +673,7 @@
 
             platforms = platforms.filter(p => p.position.y < cameraY + canvas.height + 200);
             equipments = equipments.filter(e => e.position.y < cameraY + canvas.height + 200);
-
+			drawFloatingTexts();
             ctx.restore();
         }
 
