@@ -257,6 +257,36 @@
         }
 
         .hidden { display: none !important; }
+		
+		#credits {
+			position: absolute;
+			bottom: 20px;
+			text-align: center;
+			font-size: 0.75rem;
+			color: white;
+			opacity: 0.8;
+		}
+
+		#credits span {
+			display: block;
+			margin-bottom: 4px;
+			font-size: 0.8rem;
+			color: #ffffffcc;
+		}
+
+		#credits a {
+			color: #fff;
+			text-decoration: none;
+			transition: color 0.3s ease, text-shadow 0.3s ease;
+		}
+
+		#credits a:hover {
+			color: #4CAF50;
+			text-shadow: 1px 1px 2px #000;
+		}
+
+
+		
     </style>
 </head>
 <body>
@@ -274,6 +304,11 @@
                 <h1 id="game-title">DIVALDO BROSS</h1>
                 <button id="start-button">Iniciar</button>
                 <button id="ranking-button">Ranking</button>
+				
+			<div id="credits">
+				<span>Criação:</span>
+				<a href="https://www.instagram.com/ronalldo.mello/" target="_blank">@ronalldo.mello</a>
+				</div>
             </div>
             
             <div id="ranking-screen" class="hidden">
