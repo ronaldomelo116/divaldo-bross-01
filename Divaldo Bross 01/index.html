@@ -297,6 +297,7 @@
                         <button id="save-score-btn">Salvar</button>
                     </div>
                     <button id="restart-button">Jogar Novamente</button>
+					<button id="endgame-menu-btn">Menu Principal</button>
                 </div>
             </div>
         </div>
@@ -379,6 +380,7 @@
         const messageBox = document.getElementById('message-box');
         const messageText = document.getElementById('message-text');
         const restartButton = document.getElementById('restart-button');
+		const endgameMenuBtn = document.getElementById('endgame-menu-btn');
         const pauseBtn = document.getElementById('pause-btn');
         const pauseOverlay = document.getElementById('pause-overlay');
         const resumeBtn = document.getElementById('resume-btn');
@@ -427,8 +429,9 @@
             spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
             platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma.png',
             bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
-            ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png'
-        };
+            ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png',
+			router: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/ROTEADOR.png', // ATUALIZAÇÃO: Nova imagem para 'box'
+		};
         let imagesLoadedCount = 0;
         const totalImages = Object.keys(imageSources).length;
         let allImagesLoaded = false;
@@ -511,7 +514,11 @@
                 this.width = (type === 'ont') ? 45 : 35;
                 this.height = (type === 'ont') ? 45 : 35;
             }
-            draw() { if (this.collected) return; switch (this.type) { case 'ont': if(allImagesLoaded) {ctx.drawImage(images.ont, this.position.x, this.position.y, this.width, this.height); } break; case 'box': ctx.fillStyle = '#D2B48C'; ctx.fillRect(this.position.x, this.position.y, this.width, this.height); ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 2; ctx.strokeRect(this.position.x, this.position.y, this.width, this.height); break; case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break; } }
+            draw() { if (this.collected) return; 
+			switch (this.type) { 
+			case 'ont': if(allImagesLoaded) {ctx.drawImage(images.ont, this.position.x, this.position.y, this.width, this.height); } break; 
+            case 'box': if(allImagesLoaded) { ctx.drawImage(images.router, this.position.x, this.position.y, this.width, this.height); } break; // ATUALIZAÇÃO
+			case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break; } }
         }
         
         function drawBackground() {
@@ -722,6 +729,19 @@
         }
 
         restartButton.addEventListener('click', restartGame);
+		endgameMenuBtn.addEventListener('click', () => {
+		gameOver = true;
+		clearInterval(timerInterval);
+		cancelAnimationFrame(animationFrameId);
+
+		messageBox.classList.add('hidden');
+		mainMenu.classList.remove('hidden');
+		gameContainer.classList.add('hidden');
+		uiContainer.classList.add('hidden');
+		pauseBtn.classList.add('hidden');
+		mobileControls.classList.add('hidden');
+});
+
         startButton.addEventListener('click', startGame);
         pauseBtn.addEventListener('click', togglePause);
         window.addEventListener('resize', resizeCanvas);
