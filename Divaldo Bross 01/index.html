@@ -330,7 +330,7 @@
         
         async function getScores() {
             const rankingCol = collection(db, "ranking");
-            const q = query(rankingCol, orderBy("score", "desc"), limit(5));
+            const q = query(rankingCol, orderBy("score", "desc"), limit(10));
             const rankingSnapshot = await getDocs(q);
             const scores = [];
             rankingSnapshot.forEach((doc) => {
