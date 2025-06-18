@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Divaldo Bross</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <style>
+        :root {
+            --game-height: 75vh;
+            --game-width: calc(var(--game-height) * (9 / 12));
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #253d9f;
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #game-area {
+            position: relative;
+            width: var(--game-width);
+            height: var(--game-height);
+            max-width: 95vw;
+            max-height: calc(95vw * (12 / 9));
+            border: 5px solid black;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        #main-menu, #gameContainer, #ranking-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        
+        #main-menu, #ranking-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #253d9f;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 200;
+        }
+        
+        #ranking-screen h2 {
+            font-size: 2rem;
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 20px;
+        }
+        #ranking-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 90%;
+            text-align: left;
+            font-size: 1.2rem;
+            line-height: 2.5rem;
+        }
+         #ranking-list li {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #start-button, #ranking-button, #back-to-menu-btn, .pause-menu-btn {
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #4CAF50;
+            color: white;
+            border: 4px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #1a791e;
+            margin-top: 15px;
+        }
+        
+        canvas {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            background: #253d9f;
+            border-radius: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            text-shadow: 3px 3px 0px #000;
+            margin: 0;
+        }
+
+        #ui-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px 15px;
+            width: var(--game-width);
+            max-width: 95vw;
+            padding: 8px;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+        #score, #deliveries-info, #timer {
+            font-size: 0.8rem;
+            text-shadow: 2px 2px 0px #000;
+            text-align: left;
+        }
+        #timer {
+            text-align: right;
+            grid-column: 2;
+        }
+        #score {
+            grid-column: 1;
+        }
+        
+        #message-box, #pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 40px;
+            font-size: 1.5rem;
+            text-align: center;
+            z-index: 100;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        #pause-overlay h2 {
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 0px #000;
+            margin-bottom: 30px;
+        }
+        #message-box p {
+            border: 4px solid white;
+            padding: 20px;
+            border-radius: 15px;
+            text-shadow: 3px 3px 0px #ff6347;
+        }
+        #save-score-form {
+            margin-top: 15px;
+            width: 100%;
+        }
+        #player-name {
+            width: 80%;
+            padding: 10px;
+            font-family: 'Press Start 2P', cursive;
+            border: 3px solid black;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        #save-score-btn, #message-box button {
+            margin-top: 10px;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #4CAF50;
+            color: white;
+            border: 3px solid black;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #1a791e;
+        }
+        #save-score-btn:active, #message-box button:active, #start-button:active, #ranking-button:active, .pause-menu-btn:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        #pause-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0,0,0,0.5);
+            border: 3px solid white;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1;
+            border-radius: 50%;
+            z-index: 101;
+            cursor: pointer;
+        }
+        
+        #mobile-controls {
+            width: var(--game-width);
+            max-width: 95vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        .control-btn {
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        .control-btn img {
+            width: 100%;
+            height: 100%;
+        }
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        #jump-btn { 
+            width: 120px; 
+            height: 120px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    
+    <div id="app-container">
+        <h1 class="hidden">Divaldo Bross</h1>
+        <div id="ui-container" class="hidden">
+            <div id="score">Pontos: 0</div>
+            <div id="timer">Tempo: 02:00</div>
+            <div id="deliveries-info">Equipamentos: 0</div>
+        </div>
+
+        <div id="game-area">
+            <div id="main-menu">
+                <button id="start-button">Iniciar</button>
+                <button id="ranking-button">Ranking</button>
+            </div>
+            
+            <div id="ranking-screen" class="hidden">
+                <h2>RANKING</h2>
+                <ol id="ranking-list"></ol>
+                <button id="back-to-menu-btn">Voltar</button>
+            </div>
+
+            <div id="gameContainer" class="hidden">
+                <canvas id="gameCanvas"></canvas>
+                <div id="pause-overlay" class="hidden">
+                    <h2>PAUSADO</h2>
+                    <button id="resume-btn" class="pause-menu-btn">Voltar ao Jogo</button>
+                    <button id="main-menu-btn" class="pause-menu-btn">Menu Principal</button>
+                </div>
+                <button id="pause-btn" class="hidden">||</button>
+                <div id="message-box" class="hidden">
+                    <p id="message-text"></p>
+                    <div id="save-score-form" class="hidden">
+                        <input type="text" id="player-name" placeholder="SEU NOME" maxlength="10">
+                        <button id="save-score-btn">Salvar</button>
+                    </div>
+                    <button id="restart-button">Jogar Novamente</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="mobile-controls" class="hidden">
+            <div style="display: flex; gap: 20px;">
+                <button id="left-btn" class="control-btn">
+                    <img src="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bot%C3%A3o%20para%20esquerda.png" alt="Esquerda">
+                </button>
+                <button id="right-btn" class="control-btn">
+                    <img src="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bot%C3%A3o%20para%20direita.png" alt="Direita">
+                </button>
+            </div>
+            <button id="jump-btn" class="control-btn">
+                 <img src="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bot%C3%A3o%20para%20cima.png" alt="Pular">
+            </button>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkmhEmLy4p-y1xPY1uPJT_4fklnrDdPFw",
+            authDomain: "ranking-de-divaldo-bross.firebaseapp.com",
+            projectId: "ranking-de-divaldo-bross",
+            storageBucket: "ranking-de-divaldo-bross.appspot.com",
+            messagingSenderId: "693648893210",
+            appId: "1:693648893210:web:5c7879f9e9990d287938a3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        async function getScores() {
+            const rankingCol = collection(db, "ranking");
+            const q = query(rankingCol, orderBy("score", "desc"), limit(5));
+            const rankingSnapshot = await getDocs(q);
+            const scores = [];
+            rankingSnapshot.forEach((doc) => {
+                scores.push(doc.data());
+            });
+            return scores;
+        }
+
+        async function saveScore(playerName, playerScore) {
+            try {
+                await addDoc(collection(db, "ranking"), {
+                    name: playerName,
+                    score: playerScore,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                console.error("Erro ao adicionar documento: ", e);
+            }
+        }
+        
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("Utilizador autenticado anonimamente:", user.uid);
+            } else {
+                 signInAnonymously(auth).catch((error) => {
+                    console.error("Erro na autenticação anónima:", error);
+                });
+            }
+        });
+
+        window.firebase = { getScores, saveScore };
+        
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        const scoreEl = document.getElementById('score');
+        const deliveriesInfoEl = document.getElementById('deliveries-info');
+        const timerEl = document.getElementById('timer');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const restartButton = document.getElementById('restart-button');
+        const pauseBtn = document.getElementById('pause-btn');
+        const pauseOverlay = document.getElementById('pause-overlay');
+        const resumeBtn = document.getElementById('resume-btn');
+        const mainMenuBtn = document.getElementById('main-menu-btn');
+
+        const mainMenu = document.getElementById('main-menu');
+        const startButton = document.getElementById('start-button');
+        const gameContainer = document.getElementById('gameContainer');
+        const gameTitle = document.querySelector('h1');
+        const uiContainer = document.getElementById('ui-container');
+        const mobileControls = document.getElementById('mobile-controls');
+        
+        const rankingScreen = document.getElementById('ranking-screen');
+        const rankingButton = document.getElementById('ranking-button');
+        const backToMenuBtn = document.getElementById('back-to-menu-btn');
+        const rankingList = document.getElementById('ranking-list');
+        const saveScoreForm = document.getElementById('save-score-form');
+        const playerNameInput = document.getElementById('player-name');
+        const saveScoreBtn = document.getElementById('save-score-btn');
+
+        const GRAVITY = 0.6;
+        const JUMP_FORCE = 15;
+        const BASE_PLAYER_SPEED = 4;
+        const TIME_LIMIT = 120;
+
+        let currentPlayerSpeed = BASE_PLAYER_SPEED;
+        let player, platforms, equipments;
+        let score = 0, equipmentCollected = 0, gameOver = false, isPaused = false, timeLeft, timerInterval;
+        let lastPlatformY, lastPlatformX;
+        let cameraY = 0;
+        
+        const keys = { right: { pressed: false }, left: { pressed: false } };
+
+        const images = {};
+        const imageSources = {
+            playerIdleRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico.png',
+            playerIdleLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico%202.png',
+            playerWalkRight1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-1.png',
+            playerWalkRight2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-2.png',
+            playerWalkRight3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-3.png',
+            playerWalkLeft1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-1.png',
+            playerWalkLeft2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-2.png',
+            playerWalkLeft3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-3.png',
+            playerJumpRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20dir.png',
+            playerJumpLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20esq.png',
+            spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
+            platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma.png',
+            bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
+            ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png'
+        };
+        let imagesLoadedCount = 0;
+        const totalImages = Object.keys(imageSources).length;
+        let allImagesLoaded = false;
+        
+        for (const key in imageSources) {
+            images[key] = new Image();
+            images[key].src = imageSources[key];
+            images[key].onload = () => { imagesLoadedCount++; if (imagesLoadedCount === totalImages) allImagesLoaded = true; };
+            images[key].onerror = () => console.error(`Erro ao carregar imagem: ${key}`);
+        }
+
+        let audioReady = false;
+        let jumpSound, runSound;
+        
+        function setupAudio() { if (audioReady) return; jumpSound = new Tone.Synth({ oscillator: { type: 'triangle' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.2, release: 0.2 } }).toDestination(); runSound = new Tone.NoiseSynth({ noise: { type: 'white' }, envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 } }).toDestination(); audioReady = true; }
+        function startAudio() { if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') Tone.start().then(setupAudio); }
+
+        function resizeCanvas() {
+            canvas.width = gameContainer.clientWidth;
+            canvas.height = gameContainer.clientHeight;
+        }
+
+        class Player {
+            constructor() {
+                this.position = { x: canvas.width / 2 - 30, y: canvas.height - 125 };
+                this.velocity = { x: 0, y: 0 };
+                this.width = 60; 
+                this.height = 75;
+                this.onGround = true;
+                this.direction = 'right';
+                this.currentFrame = 0;
+                this.frameTimer = 0;
+                this.frameInterval = 8;
+            }
+            
+            draw() {
+                if (!allImagesLoaded) return;
+                
+                let imageToDraw;
+                const isRunning = this.onGround && (keys.left.pressed || keys.right.pressed);
+
+                if (isRunning) {
+                    const walkFrames = this.direction === 'right' ? 
+                        [images.playerWalkRight1, images.playerWalkRight2, images.playerWalkRight3] : 
+                        [images.playerWalkLeft1, images.playerWalkLeft2, images.playerWalkLeft3];
+                    imageToDraw = walkFrames[this.currentFrame];
+                } else if (!this.onGround) {
+                    imageToDraw = this.direction === 'right' ? images.playerJumpRight : images.playerJumpLeft;
+                } else {
+                    imageToDraw = this.direction === 'right' ? images.playerIdleRight : images.playerIdleLeft;
+                }
+                
+                ctx.drawImage(imageToDraw, this.position.x, this.position.y, this.width, this.height);
+            }
+
+            update() {
+                if (this.onGround && (keys.left.pressed || keys.right.pressed)) {
+                    this.frameTimer++;
+                    if (this.frameTimer > this.frameInterval) {
+                        this.frameTimer = 0;
+                        this.currentFrame = (this.currentFrame + 1) % 3;
+                    }
+                } else {
+                    this.currentFrame = 0;
+                }
+                
+                this.position.x += this.velocity.x;
+                this.position.y += this.velocity.y;
+                this.velocity.y += GRAVITY;
+            }
+        }
+        class Platform {
+             constructor({ x, y, width = 200, height = 40 }) { this.position = { x, y }; this.width = width; this.height = height; }
+            draw() { if (allImagesLoaded) { ctx.drawImage(images.platform, this.position.x, this.position.y, this.width, this.height); } }
+        }
+        
+        class Equipment {
+            constructor({ x, y, type }) {
+                this.position = { x, y }; this.type = type; this.collected = false;
+                this.width = (type === 'ont') ? 45 : 35;
+                this.height = (type === 'ont') ? 45 : 35;
+            }
+            draw() { if (this.collected) return; switch (this.type) { case 'ont': if(allImagesLoaded) {ctx.drawImage(images.ont, this.position.x, this.position.y, this.width, this.height); } break; case 'box': ctx.fillStyle = '#D2B48C'; ctx.fillRect(this.position.x, this.position.y, this.width, this.height); ctx.strokeStyle = '#8B4513'; ctx.lineWidth = 2; ctx.strokeRect(this.position.x, this.position.y, this.width, this.height); break; case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break; } }
+        }
+        
+        function drawBackground() {
+            const bgHeight = 150;
+            const screenTop = cameraY;
+            const firstFloorIndex = Math.floor(screenTop / bgHeight);
+            for (let i = firstFloorIndex - 2; i < firstFloorIndex + 6; i++) {
+                const yPos = i * bgHeight;
+                if(allImagesLoaded) {
+                    const boxHeight = 70;
+                    const boxY = yPos + bgHeight - boxHeight - 10;
+                    ctx.drawImage(images.bgBoxes, canvas.width * 0.1, boxY, 80, boxHeight);
+                    ctx.drawImage(images.bgBoxes, canvas.width * 0.45, boxY, 80, boxHeight);
+                    ctx.drawImage(images.bgBoxes, canvas.width * 0.8, boxY, 80, boxHeight);
+                }
+                ctx.fillStyle = '#888';
+                ctx.fillRect(0, yPos + bgHeight, canvas.width, 10);
+            }
+        }
+
+        function startGame() { if (!allImagesLoaded) return; mainMenu.classList.add('hidden'); gameContainer.classList.remove('hidden'); gameTitle.classList.remove('hidden'); uiContainer.classList.remove('hidden'); pauseBtn.classList.remove('hidden'); mobileControls.classList.remove('hidden'); resizeCanvas(); init(); }
+        function restartGame() { startAudio(); init(); }
+
+        function init() {
+            gameOver = false; isPaused = false; score = 0; equipmentCollected = 0;
+            currentPlayerSpeed = BASE_PLAYER_SPEED; player = new Player(); platforms = []; equipments = []; cameraY = 0;
+            const firstPlatform = new Platform({ x: canvas.width / 2 - (canvas.width * 0.4) / 2, y: canvas.height - 50, width: canvas.width * 0.4 });
+            platforms.push(firstPlatform); lastPlatformY = firstPlatform.position.y; lastPlatformX = firstPlatform.position.x;
+            for (let i = 0; i < 20; i++) generatePlatform();
+            timeLeft = TIME_LIMIT; if (timerInterval) clearInterval(timerInterval); timerInterval = setInterval(updateTimer, 1000);
+            updateUI(); messageBox.classList.add('hidden'); pauseOverlay.classList.add('hidden');
+            animate();
+        }
+        
+        function generatePlatform() {
+            const verticalGap = Math.random() * 50 + 70; const newY = lastPlatformY - verticalGap; const horizontalOffset = (Math.random() - 0.5) * (canvas.width * 0.7); let newX = lastPlatformX + horizontalOffset; const platformWidth = canvas.width * 0.3 + Math.random() * 50; newX = Math.max(0, Math.min(canvas.width - platformWidth, newX)); const newPlatform = new Platform({ x: newX, y: newY, width: platformWidth }); platforms.push(newPlatform);
+            if (Math.random() > 0.4) { const types = ['ont', 'box', 'spool']; const randomType = types[Math.floor(Math.random() * types.length)]; let itemHeight = (randomType === 'ont') ? 45 : 35; let itemY = newPlatform.position.y - itemHeight; equipments.push(new Equipment({ x: newPlatform.position.x + newPlatform.width / 2 - 17, y: itemY, type: randomType }));}
+            lastPlatformY = newY; lastPlatformX = newX;
+        }
+
+        function updateTimer() { if (gameOver || isPaused) { return; } timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `Tempo: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { showEndGameMessage(`Tempo Esgotado!`); }}
+        function updateUI() { scoreEl.textContent = `Pontos: ${score}`; deliveriesInfoEl.textContent = `Equipamentos: ${equipmentCollected}`; }
+        
+        async function showEndGameMessage(message) {
+            if(gameOver) return;
+            gameOver = true;
+            cancelAnimationFrame(animationFrameId);
+            clearInterval(timerInterval);
+
+            messageText.innerHTML = `${message} <br><br> Equipamentos: ${equipmentCollected} <br> Pontos: ${score}`;
+            try {
+                const scores = await window.firebase.getScores();
+                if (scores.length < 5 || score > scores[scores.length - 1].score) {
+                    saveScoreForm.classList.remove('hidden');
+                } else {
+                    saveScoreForm.classList.add('hidden');
+                }
+            } catch(e) {
+                 saveScoreForm.classList.add('hidden');
+                 console.error("Não foi possível carregar o ranking da Firebase.");
+            }
+            messageBox.classList.remove('hidden');
+        }
+        
+        let animationFrameId;
+        function animate() {
+            animationFrameId = requestAnimationFrame(animate);
+            if (gameOver || isPaused) { if(gameOver) cancelAnimationFrame(animationFrameId); return; };
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.save();
+            
+            const scrollThreshold = canvas.height * 0.4;
+            if (player.position.y < cameraY + scrollThreshold) {
+                cameraY = player.position.y - scrollThreshold;
+            }
+
+            ctx.translate(0, -cameraY);
+            
+            drawBackground();
+            
+            player.velocity.x = 0;
+            if (keys.left.pressed) player.velocity.x = -currentPlayerSpeed;
+            if (keys.right.pressed) player.velocity.x = currentPlayerSpeed;
+            
+            player.update();
+            
+            player.onGround = false;
+            platforms.forEach(platform => {
+                if ( player.velocity.y >= 0 && player.position.y + player.height <= platform.position.y && player.position.y + player.height + player.velocity.y >= platform.position.y && player.position.x + player.width > platform.position.x && player.position.x < platform.position.x + platform.width) {
+                    player.velocity.y = 0;
+                    player.position.y = platform.position.y - player.height;
+                    player.onGround = true;
+                }
+            });
+
+            platforms.forEach(p => p.draw());
+            equipments.forEach(e => e.draw());
+            player.draw();
+            
+            equipments.forEach((item) => { 
+                if (item && !item.collected && player.position.x < item.position.x + item.width && player.position.x + player.width > item.position.x && player.position.y < item.position.y + item.height && player.position.y + player.height > item.position.y) { 
+                    item.collected = true; 
+                    score += 100; 
+                    equipmentCollected++; 
+                    updateUI();
+                } 
+            });
+            
+            if (player.position.y > cameraY + canvas.height) { showEndGameMessage(`Fim de Jogo!`); }
+
+            while (lastPlatformY > cameraY - 100) {
+                generatePlatform();
+            }
+
+            platforms = platforms.filter(p => p.position.y < cameraY + canvas.height + 200);
+            equipments = equipments.filter(e => e.position.y < cameraY + canvas.height + 200);
+
+            ctx.restore();
+        }
+
+        function handleJump() { if (player.onGround) { player.velocity.y = -JUMP_FORCE; if (audioReady) jumpSound.triggerAttackRelease('G4', '8n'); } }
+        
+        function togglePause() {
+            if (gameOver) return;
+            isPaused = !isPaused;
+            if (isPaused) {
+                pauseOverlay.classList.remove('hidden');
+                pauseBtn.classList.add('hidden');
+                cancelAnimationFrame(animationFrameId);
+            } else {
+                pauseOverlay.classList.add('hidden');
+                pauseBtn.classList.remove('hidden');
+                animate();
+            }
+        }
+        
+        mainMenuBtn.addEventListener('click', () => {
+            isPaused = false;
+            gameOver = true;
+            cancelAnimationFrame(animationFrameId);
+            clearInterval(timerInterval);
+            gameContainer.classList.add('hidden');
+            mainMenu.classList.remove('hidden');
+            uiContainer.classList.add('hidden');
+            pauseBtn.classList.add('hidden');
+            mobileControls.classList.add('hidden');
+        });
+        
+        resumeBtn.addEventListener('click', togglePause);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyP') { togglePause(); return; }
+            if (gameOver) { if (e.code === 'Enter' && messageBox.classList.contains('hidden') === false) { restartGame(); } return; }
+            if (isPaused) return;
+            startAudio(); 
+            switch (e.code) { 
+                case 'KeyA': case 'ArrowLeft': keys.left.pressed = true; player.direction = 'left'; break; 
+                case 'KeyD': case 'ArrowRight': keys.right.pressed = true; player.direction = 'right'; break; 
+                case 'KeyW': case 'ArrowUp': case 'Space': handleJump(); break; 
+            } 
+        });
+        
+        window.addEventListener('keyup', (e) => { switch (e.code) { case 'KeyA': case 'ArrowLeft': keys.left.pressed = false; break; case 'KeyD': case 'ArrowRight': keys.right.pressed = false; break; } });
+
+        const leftBtn = document.getElementById('left-btn'), rightBtn = document.getElementById('right-btn'), jumpBtn = document.getElementById('jump-btn');
+        function handleTouch(e, key, isPressed) { e.preventDefault(); if (gameOver || isPaused) return; startAudio(); keys[key].pressed = isPressed; if(player) player.direction = key; }
+        leftBtn.addEventListener('touchstart', (e) => handleTouch(e, 'left', true));
+        leftBtn.addEventListener('touchend', (e) => handleTouch(e, 'left', false));
+        rightBtn.addEventListener('touchstart', (e) => handleTouch(e, 'right', true));
+        rightBtn.addEventListener('touchend', (e) => handleTouch(e, 'right', false));
+        jumpBtn.addEventListener('touchstart', (e) => { e.preventDefault(); if (gameOver || isPaused) return; startAudio(); handleJump(); });
+        
+        rankingButton.addEventListener('click', async () => {
+            mainMenu.classList.add('hidden');
+            rankingScreen.classList.remove('hidden');
+            await displayRanking();
+        });
+        
+        backToMenuBtn.addEventListener('click', () => {
+            rankingScreen.classList.add('hidden');
+            mainMenu.classList.remove('hidden');
+        });
+
+        saveScoreBtn.addEventListener('click', async () => {
+            const name = playerNameInput.value.trim().toUpperCase();
+            if (!name) {
+                alert('Por favor, insira o seu nome!');
+                return;
+            }
+            await window.firebase.saveScore(name, score);
+            saveScoreForm.classList.add('hidden');
+        });
+        
+        async function displayRanking() {
+            rankingList.innerHTML = '<li>A carregar...</li>';
+            const scores = await window.firebase.getScores();
+            rankingList.innerHTML = '';
+            if (scores.length === 0) {
+                rankingList.innerHTML = '<li>Ninguém no ranking ainda!</li>';
+                return;
+            }
+            scores.forEach((s, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${index + 1}. ${s.name}</span><span>${s.score}</span>`;
+                rankingList.appendChild(li);
+            });
+        }
+
+        restartButton.addEventListener('click', restartGame);
+        startButton.addEventListener('click', startGame);
+        pauseBtn.addEventListener('click', togglePause);
+        window.addEventListener('resize', resizeCanvas);
+
+    </script>
+</body>
+</html>
+
