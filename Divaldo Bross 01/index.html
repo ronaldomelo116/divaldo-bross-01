@@ -91,7 +91,7 @@
             justify-content: space-between;
         }
 
-        #start-button, #ranking-button, #back-to-menu-btn, .pause-menu-btn {
+        #start-button, #ranking-button, #back-to-menu-btn, #show-items-btn, .pause-menu-btn {
             padding: 15px 30px;
             font-size: 1.3rem;
             font-family: 'Press Start 2P', cursive;
@@ -202,7 +202,7 @@
             cursor: pointer;
             box-shadow: 0 5px 0 #1a791e;
         }
-        #save-score-btn:active, #message-box button:active, #start-button:active, #ranking-button:active, .pause-menu-btn:active {
+        #save-score-btn:active, #message-box button:active, #start-button:active, #ranking-button:active, #back-to-menu-items-btn, .pause-menu-btn:active {
             transform: translateY(5px);
             box-shadow: none;
         }
@@ -304,7 +304,13 @@
             <div id="main-menu">
                 <h1 id="game-title">DIVALDO BROSS</h1>
                 <button id="start-button">Iniciar</button>
-                <button id="ranking-button">Ranking</button>
+                <button id="show-items-btn">Itens do Jogo</button>
+				<button id="ranking-button">Ranking</button>
+			
+    <div id="item-section" style="display: none; text-align: center;">
+        <ul id="item-list" style="list-style: none; padding: 0;"></ul>
+        <button id="back-to-menu-items-btn" class="pause-menu-btn">Voltar</button>
+    </div>
 				
 			<div id="credits">
 				<span>Criação:</span>
@@ -537,11 +543,24 @@ const imageSources = {
 				imageToDraw = this.direction === 'right' ? images.playerIdleRight : images.playerIdleLeft;
 				}
 
-				// Ajustes de largura por estado
-				const drawWidth = isStanding ? 40 : isJumping ? 50 : this.width;
+				// Ajustes de largura e altura por estado
+				let drawWidth, drawHeight;
+
+				if (isRunning) {
+				drawWidth = 70;     // largura ao correr
+				drawHeight = 80;    // altura ao correr
+				} else if (isJumping) {
+				drawWidth = 50;
+				drawHeight = 75;
+				} else {
+				drawWidth = 40;
+				drawHeight = 75;
+				}
+
 				const drawX = this.position.x + (this.width - drawWidth) / 2;
 
-				ctx.drawImage(imageToDraw, drawX, this.position.y, drawWidth, this.height);
+				ctx.drawImage(imageToDraw, drawX, this.position.y, drawWidth, drawHeight);
+
 				}
 
             update() {
@@ -948,5 +967,59 @@ if (randomChance < cakeChance) {
         window.addEventListener('resize', resizeCanvas);
 
     </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const gameItems = [
+      { nome: "Bobina de Drop", pontos: 100, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png" },
+      { nome: "Roteador", pontos: 150, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/ROTEADOR.png" },
+      { nome: "Caixa de fiber", pontos: 200, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/caixa%20fiber.png" },
+      { nome: "Bolo da moça (item raro)", pontos: 500, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/bolo%20da%20moça.png" },
+      { nome: "Café (item raro)", pontos: 500, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/café.png" }
+    ];
+
+    const showBtn = document.getElementById('show-items-btn');
+    const backBtn = document.getElementById('back-to-menu-items-btn');
+    const itemSection = document.getElementById('item-section');
+    const itemList = document.getElementById('item-list');
+    const mainMenu = document.getElementById('main-menu');
+
+    showBtn.addEventListener('click', () => {
+      itemList.innerHTML = '';
+      gameItems.forEach(item => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.alignItems = 'center';
+        li.style.marginBottom = '15px';
+        li.style.justifyContent = 'center';
+        li.style.gap = '15px';
+
+        const img = document.createElement('img');
+        img.src = item.imagem;
+        img.alt = item.nome;
+        img.style.width = '48px';
+        img.style.height = '48px';
+
+        const span = document.createElement('span');
+        span.textContent = `${item.nome} - ${item.pontos} pontos`;
+
+        li.appendChild(img);
+        li.appendChild(span);
+        itemList.appendChild(li);
+      });
+      itemSection.style.display = 'block';
+      showBtn.style.display = 'none';
+      document.getElementById('start-button').style.display = 'none';
+      document.getElementById('ranking-button').style.display = 'none';
+    });
+
+    backBtn.addEventListener('click', () => {
+      itemSection.style.display = 'none';
+      showBtn.style.display = 'inline-block';
+      document.getElementById('start-button').style.display = 'inline-block';
+      document.getElementById('ranking-button').style.display = 'inline-block';
+    });
+  });
+</script>
 </body>
 </html>
