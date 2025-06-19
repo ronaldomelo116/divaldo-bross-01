@@ -302,17 +302,21 @@
 
         <div id="game-area">
             <div id="main-menu">
-			    <img src="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/logo%20divaldo%20bross.png" 
+			    <img id="logo-img"
+				src="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/logo%20divaldo%20bross.png" 
 				alt="Logo Divaldo Bross" 
 				style="max-width: 200px; height: auto; margin-bottom: 20px;">
+				<h1 id="items-title" style="display: none; color: white; text-shadow: 2px 2px 0 #000;">Itens do Jogo</h1>
+
+				</h1>
                 <button id="start-button">Iniciar</button>
                 <button id="show-items-btn">Itens do Jogo</button>
 				<button id="ranking-button">Ranking</button>
 			
-    <div id="item-section" style="display: none; text-align: center;">
-        <ul id="item-list" style="list-style: none; padding: 0;"></ul>
-        <button id="back-to-menu-items-btn" class="pause-menu-btn">Voltar</button>
-    </div>
+		<div id="item-section" style="display: none; text-align: center;">
+			<ul id="item-list" style="list-style: none; padding: 0;"></ul>
+			<button id="back-to-menu-items-btn" class="pause-menu-btn">Voltar</button>
+		</div>
 				
 			<div id="credits">
 				<span>Criação:</span>
@@ -1011,15 +1015,19 @@ if (randomChance < cakeChance) {
       });
       itemSection.style.display = 'block';
       showBtn.style.display = 'none';
-      document.getElementById('start-button').style.display = 'none';
-      document.getElementById('ranking-button').style.display = 'none';
+		document.getElementById('start-button').style.display = 'none';
+		document.getElementById('ranking-button').style.display = 'none';
+		document.getElementById('logo-img').style.display = 'none';
+		document.getElementById('items-title').style.display = 'block';
     });
 
     backBtn.addEventListener('click', () => {
       itemSection.style.display = 'none';
       showBtn.style.display = 'inline-block';
-      document.getElementById('start-button').style.display = 'inline-block';
-      document.getElementById('ranking-button').style.display = 'inline-block';
+		document.getElementById('start-button').style.display = 'inline-block';
+		document.getElementById('ranking-button').style.display = 'inline-block';
+		document.getElementById('logo-img').style.display = 'block';
+		document.getElementById('items-title').style.display = 'none';
     });
   });
 </script>
