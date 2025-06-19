@@ -57,13 +57,14 @@
         
         #main-menu, #ranking-screen {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: #253d9f;
-            padding: 20px;
-            box-sizing: border-box;
-            z-index: 200;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background: #253d9f;
+			padding: 20px;
+			padding-bottom: 80px; /* novo */
+			box-sizing: border-box;
+			z-index: 200;
         }
         #game-title {
 			font-size: 2rem;
@@ -101,7 +102,8 @@
             border-radius: 10px;
             cursor: pointer;
             box-shadow: 0 6px 0 #1a791e;
-            margin-top: 15px;
+            margin-top: 10px;
+			margin-bottom: 5px;
         }
         
         canvas {
@@ -1019,6 +1021,7 @@ if (randomChance < cakeChance) {
 		document.getElementById('ranking-button').style.display = 'none';
 		document.getElementById('logo-img').style.display = 'none';
 		document.getElementById('items-title').style.display = 'block';
+		document.getElementById('credits').style.display = 'none';
     });
 
     backBtn.addEventListener('click', () => {
@@ -1028,6 +1031,8 @@ if (randomChance < cakeChance) {
 		document.getElementById('ranking-button').style.display = 'inline-block';
 		document.getElementById('logo-img').style.display = 'block';
 		document.getElementById('items-title').style.display = 'none';
+		document.getElementById('credits').style.display = 'block';
+
     });
   });
 </script>
