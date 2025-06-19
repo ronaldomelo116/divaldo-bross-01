@@ -544,6 +544,10 @@
                 this.position.x += this.velocity.x;
                 this.position.y += this.velocity.y;
                 this.velocity.y += GRAVITY;
+				
+				// 💡 Aqui entra o limite de velocidade de queda
+				this.velocity.y = Math.min(this.velocity.y, 25);
+				
             }
         }
         class Platform {
@@ -652,10 +656,15 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
             
-            const scrollThreshold = canvas.height * 0.4;
-            if (player.position.y < cameraY + scrollThreshold) {
-                cameraY = player.position.y - scrollThreshold;
-            }
+            const upperScrollThreshold = canvas.height * 0.4;
+			const lowerScrollThreshold = canvas.height * 0.6;
+
+			if (player.position.y < cameraY + upperScrollThreshold) {
+			cameraY = player.position.y - upperScrollThreshold;
+			} else if (player.position.y > cameraY + lowerScrollThreshold) {
+			cameraY = player.position.y - lowerScrollThreshold;
+			}
+
 
             ctx.translate(0, -cameraY);
             
@@ -671,22 +680,24 @@
             platforms.forEach(platform => {
 			const nextBottom = player.position.y + player.height + player.velocity.y;
 			const platformTop = platform.position.y;
+			const platformBottom = platform.position.y + platform.height;
 
 			const isFalling = player.velocity.y >= 0;
 			const withinXRange =
 			player.position.x + player.width > platform.position.x &&
 			player.position.x < platform.position.x + platform.width;
 
-			const willCollide =
-			player.position.y + player.height <= platformTop &&
-			nextBottom >= platformTop;
+			// Novo: margem de segurança (altura máxima que ele pode atravessar)
+			const maxStep = player.velocity.y + 1;
 
-			if (isFalling && withinXRange && willCollide) {
+			const closeEnough = nextBottom >= platformTop && player.position.y + player.height <= platformTop + 10;
+
+			if (isFalling && withinXRange && closeEnough) {
 			player.velocity.y = 0;
-			player.position.y = platform.position.y - player.height;
+			player.position.y = platformTop - player.height;
 			player.onGround = true;
 			}
-});
+			});
 
             platforms.forEach(p => p.draw());
             equipments.forEach(e => e.draw());
@@ -714,10 +725,18 @@
             });
             
             if (player.position.y > cameraY + canvas.height) { showEndGameMessage(`Fim de Jogo!`); }
+			// Fim de jogo se o jogador estiver abaixo da última plataforma visível
+			const lowestPlatform = platforms.reduce((lowest, p) =>
+				p.position.y > lowest.position.y ? p : lowest, platforms[0]
+			);
 
-            while (lastPlatformY > cameraY - 100) {
-                generatePlatform();
-            }
+			if (player.position.y > lowestPlatform.position.y + 100) {
+				showEndGameMessage(`Fim de Jogo!`);
+			}
+
+            while (lastPlatformY > cameraY - canvas.height - 200) {
+			generatePlatform();
+			}
 
             platforms = platforms.filter(p => p.position.y < cameraY + canvas.height + 200);
             equipments = equipments.filter(e => e.position.y < cameraY + canvas.height + 200);
