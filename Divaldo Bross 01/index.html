@@ -452,13 +452,18 @@
         const itemScores = {
 		ont: 200,       // Caixa Fiberhome
 		box: 150,       // Roteador
-		spool: 100      // Bobina de drop
+		spool: 100,      // Bobina de drop
+		cake: 500,   	//  Bolo vale 500 pontos
+		coffee: 50		//café
 		};
 
         const keys = { right: { pressed: false }, left: { pressed: false } };
 
         const images = {};
-        const imageSources = {
+        const cakeChance = 0.10;
+		const coffeeChance = 0.20;
+
+const imageSources = {
             playerIdleRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico.png',
             playerIdleLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico%202.png',
             playerWalkRight1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-1.png',
@@ -602,7 +607,17 @@
         
         function generatePlatform() {
             const verticalGap = Math.random() * 50 + 70; const newY = lastPlatformY - verticalGap; const horizontalOffset = (Math.random() - 0.5) * (canvas.width * 0.7); let newX = lastPlatformX + horizontalOffset; const platformWidth = canvas.width * 0.3 + Math.random() * 50; newX = Math.max(0, Math.min(canvas.width - platformWidth, newX)); const newPlatform = new Platform({ x: newX, y: newY, width: platformWidth }); platforms.push(newPlatform);
-            if (Math.random() > 0.4) { const types = ['ont', 'box', 'spool']; const randomType = types[Math.floor(Math.random() * types.length)]; let itemHeight = (randomType === 'ont') ? 45 : 35; let itemY = newPlatform.position.y - itemHeight; equipments.push(new Equipment({ x: newPlatform.position.x + newPlatform.width / 2 - 17, y: itemY, type: randomType }));}
+            if (Math.random() > 0.4) { let randomType;
+const randomChance = Math.random();
+
+if (randomChance < cakeChance) {
+    randomType = 'cake';
+} else if (randomChance < cakeChance + coffeeChance) {
+    randomType = 'coffee';
+} else {
+    const commonTypes = ['ont', 'box', 'spool'];
+    randomType = commonTypes[Math.floor(Math.random() * commonTypes.length)];
+} let itemHeight = (randomType === 'ont') ? 45 : 35; let itemY = newPlatform.position.y - itemHeight; equipments.push(new Equipment({ x: newPlatform.position.x + newPlatform.width / 2 - 17, y: itemY, type: randomType }));}
             lastPlatformY = newY; lastPlatformX = newX;
         }
 
