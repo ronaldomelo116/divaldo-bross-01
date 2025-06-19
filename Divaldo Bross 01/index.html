@@ -454,31 +454,33 @@
 		box: 150,       // Roteador
 		spool: 100,      // Bobina de drop
 		cake: 500,   	//  Bolo vale 500 pontos
-		coffee: 50		//café
+		coffee: 500		//café
 		};
 
         const keys = { right: { pressed: false }, left: { pressed: false } };
 
         const images = {};
-        const cakeChance = 0.10;
-		const coffeeChance = 0.20;
+        const cakeChance = 0.05;
+		const coffeeChance = 0.05;
 
 const imageSources = {
-            playerIdleRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico.png',
-            playerIdleLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico%202.png',
-            playerWalkRight1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-1.png',
-            playerWalkRight2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-2.png',
-            playerWalkRight3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-3.png',
-            playerWalkLeft1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-1.png',
-            playerWalkLeft2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-2.png',
-            playerWalkLeft3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-3.png',
-            playerJumpRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20dir.png',
-            playerJumpLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20esq.png',
-            spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
-            platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma01.png',
-            bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
-            ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png',
-			router: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/ROTEADOR.png', // ATUALIZAÇÃO: Nova imagem para 'box'
+            	playerIdleRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico.png',
+            	playerIdleLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20estatico%202.png',
+            	playerWalkRight1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-1.png',
+            	playerWalkRight2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-2.png',
+            	playerWalkRight3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/divaldo-correndo%20dir/D%20frame-3.png',
+            	playerWalkLeft1: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-1.png',
+            	playerWalkLeft2: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-2.png',
+            	playerWalkLeft3: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-correndo-esq/E%20frame-3.png',
+            	playerJumpRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20dir.png',
+            	playerJumpLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo%20pulo%20esq.png',
+            	spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
+            	platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma01.png',
+            	bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
+            	ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png',
+		router: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/ROTEADOR.png', // ATUALIZAÇÃO: Nova imagem para 'box'
+		cake: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bolo%20da%20moça.png',
+		coffee: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/café.png',
 		};
         let imagesLoadedCount = 0;
         const totalImages = Object.keys(imageSources).length;
@@ -570,7 +572,10 @@ const imageSources = {
 			switch (this.type) { 
 			case 'ont': if(allImagesLoaded) {ctx.drawImage(images.ont, this.position.x, this.position.y, this.width, this.height); } break; 
             case 'box': if(allImagesLoaded) { ctx.drawImage(images.router, this.position.x, this.position.y, this.width, this.height); } break; // ATUALIZAÇÃO
-			case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break; } }
+			case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break;  
+			case 'cake': if (allImagesLoaded) { ctx.drawImage(images.cake, this.position.x, this.position.y, this.width, this.height); } break;
+			case 'coffee': if (allImagesLoaded) { ctx.drawImage(images.coffee, this.position.x, this.position.y, this.width, this.height); } break; }
+			}
         }
         
         function drawBackground() {
