@@ -686,6 +686,57 @@ if (randomChance < cakeChance) {
 			});
 		}
         let animationFrameId;
+		let speechBubble = null;
+
+		function showSpeech(text) {
+		speechBubble = {
+        text: text,
+        x: player.position.x,
+        y: player.position.y - 30,
+        duration: 100 // frames (~1.5s)
+			};
+		}
+
+		function drawSpeechBubble() {
+		if (!speechBubble || speechBubble.duration <= 0) return;
+
+		ctx.save();
+
+		const bubbleWidth = 110;
+		const bubbleHeight = 40;
+		const x = speechBubble.x + player.width / 2 - bubbleWidth / 2;
+		const y = speechBubble.y - bubbleHeight;
+
+		// Balão: fundo branco com borda preta
+		ctx.fillStyle = '#fff';
+		ctx.strokeStyle = '#000';
+		ctx.lineWidth = 2;
+		ctx.beginPath();
+		ctx.roundRect(x, y, bubbleWidth, bubbleHeight, 10);
+		ctx.fill();
+		ctx.stroke();
+
+		// Triângulo de fala
+		ctx.beginPath();
+		ctx.moveTo(x + bubbleWidth / 2 - 5, y + bubbleHeight);
+		ctx.lineTo(x + bubbleWidth / 2 + 5, y + bubbleHeight);
+		ctx.lineTo(x + bubbleWidth / 2, y + bubbleHeight + 8);
+		ctx.closePath();
+		ctx.fill();
+		ctx.stroke();
+
+		// Texto
+		ctx.fillStyle = '#000';
+		ctx.font = 'bold 14px Arial';
+		ctx.textAlign = 'center';
+		ctx.fillText(speechBubble.text, speechBubble.x + player.width / 2, speechBubble.y - 10);
+
+		ctx.restore();
+
+		speechBubble.duration--;
+}
+
+
         function animate() {
             animationFrameId = requestAnimationFrame(animate);
             if (gameOver || isPaused) { if(gameOver) cancelAnimationFrame(animationFrameId); return; };
@@ -741,7 +792,11 @@ if (randomChance < cakeChance) {
             player.draw();
             
             equipments.forEach((item) => { 
-                if (item && !item.collected && player.position.x < item.position.x + item.width && player.position.x + player.width > item.position.x && player.position.y < item.position.y + item.height && player.position.y + player.height > item.position.y) { 
+                if (item && !item.collected && 
+				player.position.x < item.position.x + item.width && 
+				player.position.x + player.width > item.position.x && 
+				player.position.y < item.position.y + item.height && 
+				player.position.y + player.height > item.position.y) { 
                     item.collected = true; 
                     const itemValue = itemScores[item.type] || 100; // valor padrão se não encontrar
 					score += itemValue;
@@ -755,10 +810,14 @@ if (randomChance < cakeChance) {
 					y: item.position.y - 10,
 					opacity: 1,
 					color: '#00FF00' // Verde
-			});
-
-
-                } 
+				});
+					// 💬 BALÃO DE FALA:
+					if (item.type === 'cake') {
+						showSpeech("hora do bolo");
+					} else if (item.type === 'coffee') {
+						showSpeech("opa cafezin");
+					}
+				}					
             });
             
             if (player.position.y > cameraY + canvas.height) { showEndGameMessage(`Fim de Jogo!`); }
@@ -778,6 +837,7 @@ if (randomChance < cakeChance) {
             platforms = platforms.filter(p => p.position.y < cameraY + canvas.height + 200);
             equipments = equipments.filter(e => e.position.y < cameraY + canvas.height + 200);
 			drawFloatingTexts();
+			drawSpeechBubble();
             ctx.restore();
         }
 
