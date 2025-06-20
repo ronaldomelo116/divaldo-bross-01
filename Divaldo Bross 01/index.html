@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Divaldo Bross</title>
-    	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/favicon-32x32.png">
-	<link rel="shortcut icon" type="image/png" href="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/favicon-32x32.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/logo%20divaldo%20bross.png">
+	<link rel="shortcut icon" type="image/png" href="https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/logo%20divaldo%20bross.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -557,7 +557,7 @@ const imageSources = {
 				let drawWidth, drawHeight;
 
 				if (isRunning) {
-				drawWidth = 70;     // largura ao correr
+				drawWidth = 80;     // largura ao correr
 				drawHeight = 80;    // altura ao correr
 				} else if (isJumping) {
 				drawWidth = 50;
@@ -634,7 +634,14 @@ const imageSources = {
             }
         }
 
-        function startGame() { if (!allImagesLoaded) return; mainMenu.classList.add('hidden'); gameContainer.classList.remove('hidden'); gameTitle.classList.remove('hidden'); uiContainer.classList.remove('hidden'); pauseBtn.classList.remove('hidden'); mobileControls.classList.remove('hidden'); resizeCanvas(); init(); }
+        function startGame() { if (!allImagesLoaded) return; 
+        mainMenu.classList.add('hidden'); 
+        gameContainer.classList.remove('hidden'); 
+        //gameTitle.classList.remove('hidden'); // titulo removido da gameplay
+        uiContainer.classList.remove('hidden'); 
+        pauseBtn.classList.remove('hidden'); 
+        mobileControls.classList.remove('hidden'); 
+        resizeCanvas(); init(); }
         function restartGame() { startAudio(); init(); }
 
         function init() {
