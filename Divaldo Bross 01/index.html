@@ -437,11 +437,21 @@
             clickSound.currentTime = 0; // Essencial para poder clicar rápido
             clickSound.play();
         }
+		function playGameOverSound() {
+            gameOverSound.currentTime = 0;
+            gameOverSound.play();
+        }
+		function playTimesUpSound() {
+            timesUpSound.currentTime = 0;
+            timesUpSound.play();
+        }
 		
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const menuMusic = document.getElementById('menu-music'); //musica do jogo
 		const clickSound = document.getElementById('click-sound'); //efeito sonoro de click nos botões
+		const gameOverSound = document.getElementById('game-over-sound'); //efeito sonoro de fim de Jogo
+		const timesUpSound = document.getElementById('times-up-sound'); //efeito sonoro de fim de tempo
         const scoreEl = document.getElementById('score');
         const deliveriesInfoEl = document.getElementById('deliveries-info');
         const timerEl = document.getElementById('timer');
@@ -697,11 +707,15 @@ if (randomChance < cakeChance) {
             lastPlatformY = newY; lastPlatformX = newX;
         }
 
-        function updateTimer() { if (gameOver || isPaused) { return; } timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `Tempo: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; if (timeLeft <= 0) { showEndGameMessage(`Tempo Esgotado!`); }}
+        function updateTimer() { if (gameOver || isPaused) { return; } timeLeft--; const minutes = Math.floor(timeLeft / 60); const seconds = timeLeft % 60; timerEl.textContent = `Tempo: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; 
+		if (timeLeft <= 0) { 
+		playTimesUpSound();
+		showEndGameMessage(`Tempo Esgotado!`); }}
         function updateUI() { scoreEl.textContent = `Pontos: ${score}`; deliveriesInfoEl.textContent = `Equipamentos: ${equipmentCollected}`; }
         
         async function showEndGameMessage(message) {
             if(gameOver) return;
+			stopMenuMusic();
             gameOver = true;
             cancelAnimationFrame(animationFrameId);
             clearInterval(timerInterval);
@@ -874,13 +888,16 @@ if (randomChance < cakeChance) {
 				}					
             });
             
-            if (player.position.y > cameraY + canvas.height) { showEndGameMessage(`Fim de Jogo!`); }
+            if (player.position.y > cameraY + canvas.height) { 
+				playGameOverSound();
+				showEndGameMessage(`Fim de Jogo!`); }
 			// Fim de jogo se o jogador estiver abaixo da última plataforma visível
 			const lowestPlatform = platforms.reduce((lowest, p) =>
 				p.position.y > lowest.position.y ? p : lowest, platforms[0]
 			);
 
 			if (player.position.y > lowestPlatform.position.y + 100) {
+				playGameOverSound();
 				showEndGameMessage(`Fim de Jogo!`);
 			}
 
@@ -1086,6 +1103,13 @@ if (randomChance < cakeChance) {
 	
 	<audio id="click-sound">
         <source src="https://orangefreesounds.com/wp-content/uploads/2025/01/Cheek-pop-sound-effect.mp3" type="audio/mpeg">
+    </audio>
+	
+	<audio id="game-over-sound">
+        <source src="https://cdn.pixabay.com/audio/2024/07/14/audio_a635b92d22.mp3" type="audio/mpeg">
+    </audio>
+	<audio id="times-up-sound">
+        <source src="https://cdn.pixabay.com/audio/2024/07/14/audio_19e864663a.mp3" type="audio/mpeg">
     </audio>
 	
 </body>
