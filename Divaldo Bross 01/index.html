@@ -422,10 +422,21 @@
         });
 
         window.firebase = { getScores, saveScore };
-        
+		
+        function playMenuMusic() {
+            menuMusic.play().catch(error => {
+                console.log("Música aguardando interação do usuário para tocar.");
+            });
+        }
+
+        function stopMenuMusic() {
+            menuMusic.pause();
+            menuMusic.currentTime = 0; 
+        }
+		
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        
+        const menuMusic = document.getElementById('menu-music');
         const scoreEl = document.getElementById('score');
         const deliveriesInfoEl = document.getElementById('deliveries-info');
         const timerEl = document.getElementById('timer');
@@ -634,7 +645,9 @@ const imageSources = {
             }
         }
 
-        function startGame() { if (!allImagesLoaded) return; 
+        function startGame() { 
+		stopMenuMusic();
+		if (!allImagesLoaded) return; 
         mainMenu.classList.add('hidden'); 
         gameContainer.classList.remove('hidden'); 
         //gameTitle.classList.remove('hidden'); // titulo removido da gameplay
@@ -900,6 +913,7 @@ if (randomChance < cakeChance) {
             clearInterval(timerInterval);
             gameContainer.classList.add('hidden');
             mainMenu.classList.remove('hidden');
+			playMenuMusic();
             uiContainer.classList.add('hidden');
             pauseBtn.classList.add('hidden');
             mobileControls.classList.add('hidden');
@@ -938,6 +952,7 @@ if (randomChance < cakeChance) {
         backToMenuBtn.addEventListener('click', () => {
             rankingScreen.classList.add('hidden');
             mainMenu.classList.remove('hidden');
+			 playMenuMusic();
         });
 
         saveScoreBtn.addEventListener('click', async () => {
@@ -973,13 +988,17 @@ if (randomChance < cakeChance) {
 
 		messageBox.classList.add('hidden');
 		mainMenu.classList.remove('hidden');
+		playMenuMusic();
 		gameContainer.classList.add('hidden');
 		uiContainer.classList.add('hidden');
 		pauseBtn.classList.add('hidden');
 		mobileControls.classList.add('hidden');
 });
 
-        startButton.addEventListener('click', startGame);
+        startButton.addEventListener('click', () => {
+		playMenuMusic(); // Adicionamos esta linha primeiro
+		startGame();     // E depois chamamos a função original
+		});
         pauseBtn.addEventListener('click', togglePause);
         window.addEventListener('resize', resizeCanvas);
 
@@ -1045,5 +1064,11 @@ if (randomChance < cakeChance) {
     });
   });
 </script>
+
+    <audio id="menu-music" loop>
+        <source src="https://orangefreesounds.com/wp-content/uploads/2025/04/8-bit-chiptune-music.mp3" type="audio/mpeg">
+    </audio>
+	
+	
 </body>
 </html>
