@@ -505,6 +505,7 @@
         const images = {};
         const cakeChance = 0.05;
 		const coffeeChance = 0.05;
+        const emptySpoolChance = 0.05; // CHANCE DA BOBINA VAZIA
 
 const imageSources = {
             playerIdleRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-dir-p.png',
@@ -688,25 +689,32 @@ const imageSources = {
         
         function generatePlatform() {
             const verticalGap = Math.random() * 50 + 70; const newY = lastPlatformY - verticalGap; const horizontalOffset = (Math.random() - 0.5) * (canvas.width * 0.7); let newX = lastPlatformX + horizontalOffset; const platformWidth = canvas.width * 0.3 + Math.random() * 50; newX = Math.max(0, Math.min(canvas.width - platformWidth, newX)); const newPlatform = new Platform({ x: newX, y: newY, width: platformWidth }); platforms.push(newPlatform);
-            if (Math.random() > 0.4) { let randomType;
-const randomChance = Math.random();
+            if (Math.random() > 0.4) { 
+                let randomType;
+                const randomChance = Math.random();
 
-if (randomChance < cakeChance) {
-    randomType = 'cake';
-	} 	else if (randomChance < cakeChance + coffeeChance) {
-    randomType = 'coffee';
-	} 	else {
-		const commonTypes = ['ont', 'box', 'spool', 'emptySpool'];
-    randomType = commonTypes[Math.floor(Math.random() * commonTypes.length)];
-	} 	let itemHeight = (randomType === 'ont') ? 45 : 35; 
-		let itemYOffset = 0;
-		if (randomType === 'ont') {
-		itemYOffset = 9; // ajuste da ont
-		} else if (randomType === 'spool' || randomType === 'emptySpool') {
-		itemYOffset = -3; // ajuste da bobina (mais baixo)
-		}
+                if (randomChance < cakeChance) {
+                    randomType = 'cake';
+                } else if (randomChance < cakeChance + coffeeChance) {
+                    randomType = 'coffee';
+                } else if (randomChance < cakeChance + coffeeChance + emptySpoolChance) {
+                    randomType = 'emptySpool';
+                } else {
+                    const commonTypes = ['ont', 'box', 'spool'];
+                    randomType = commonTypes[Math.floor(Math.random() * commonTypes.length)];
+                }
 
-		let itemY = newPlatform.position.y - itemHeight + itemYOffset; equipments.push(new Equipment({ x: newPlatform.position.x + newPlatform.width / 2 - 17, y: itemY, type: randomType }));}
+                let itemHeight = (randomType === 'ont') ? 45 : 35; 
+                let itemYOffset = 0;
+                if (randomType === 'ont') {
+                itemYOffset = 9; // ajuste da ont
+                } else if (randomType === 'spool' || randomType === 'emptySpool') {
+                itemYOffset = -3; // ajuste da bobina (mais baixo)
+                }
+
+		        let itemY = newPlatform.position.y - itemHeight + itemYOffset; 
+                equipments.push(new Equipment({ x: newPlatform.position.x + newPlatform.width / 2 - 17, y: itemY, type: randomType }));
+            }
             lastPlatformY = newY; lastPlatformX = newX;
         }
 
