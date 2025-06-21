@@ -301,7 +301,7 @@
         <div id="ui-container" class="hidden">
             <div id="score">Pontos: 0</div>
             <div id="timer">Tempo: 02:00</div>
-            <div id="deliveries-info">Equipamentos: 0</div>
+            <div id="deliveries-info">Itens: 0</div>
         </div>
 
         <div id="game-area">
@@ -496,7 +496,8 @@
 		box: 150,       // Roteador
 		spool: 100,      // Bobina de drop
 		cake: 500,   	//  Bolo vale 500 pontos
-		coffee: 500		//café
+		coffee: 500,		//café
+        emptySpool: 0   // Bobina Vazia
 		};
 
         const keys = { right: { pressed: false }, left: { pressed: false } };
@@ -517,6 +518,7 @@ const imageSources = {
             playerJumpRight: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-pulo-dir.png',
             playerJumpLeft: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/divaldo-pulo-esq.png',
             spool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png',
+            emptySpool: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20basia.png',
             platform: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/plataforma01.png',
             bgBoxes: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/palete%20com%20caixas.png',
             ont: 'https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/caixa%20fiber.png',
@@ -629,14 +631,15 @@ const imageSources = {
                 this.position = { x, y }; this.type = type; this.collected = false;
                 this.width = (type === 'ont') ? 45 : 35;
                 this.height = (type === 'ont') ? 45 : 35;
-				this.width = (type === 'spool') ? 45 : 35;
-                this.height = (type === 'spool') ? 45 : 35;
+				this.width = (type === 'spool' || type === 'emptySpool') ? 45 : 35;
+                this.height = (type === 'spool' || type === 'emptySpool') ? 45 : 35;
             }
             draw() { if (this.collected) return; 
 			switch (this.type) { 
 			case 'ont': if(allImagesLoaded) {ctx.drawImage(images.ont, this.position.x, this.position.y, this.width, this.height); } break; 
             case 'box': if(allImagesLoaded) { ctx.drawImage(images.router, this.position.x, this.position.y, this.width, this.height); } break; // ATUALIZAÇÃO
 			case 'spool': if (allImagesLoaded) { ctx.drawImage(images.spool, this.position.x, this.position.y, this.width, this.height); } break;  
+			case 'emptySpool': if (allImagesLoaded) { ctx.drawImage(images.emptySpool, this.position.x, this.position.y, this.width, this.height); } break;  
 			case 'cake': if (allImagesLoaded) { ctx.drawImage(images.cake, this.position.x, this.position.y, this.width, this.height); } break;
 			case 'coffee': if (allImagesLoaded) { ctx.drawImage(images.coffee, this.position.x, this.position.y, this.width, this.height); } break; }
 			}
@@ -693,13 +696,13 @@ if (randomChance < cakeChance) {
 	} 	else if (randomChance < cakeChance + coffeeChance) {
     randomType = 'coffee';
 	} 	else {
-		const commonTypes = ['ont', 'box', 'spool'];
+		const commonTypes = ['ont', 'box', 'spool', 'emptySpool'];
     randomType = commonTypes[Math.floor(Math.random() * commonTypes.length)];
 	} 	let itemHeight = (randomType === 'ont') ? 45 : 35; 
 		let itemYOffset = 0;
 		if (randomType === 'ont') {
 		itemYOffset = 9; // ajuste da ont
-		} else if (randomType === 'spool') {
+		} else if (randomType === 'spool' || randomType === 'emptySpool') {
 		itemYOffset = -3; // ajuste da bobina (mais baixo)
 		}
 
@@ -711,7 +714,7 @@ if (randomChance < cakeChance) {
 		if (timeLeft <= 0) { 
 		playTimesUpSound();
 		showEndGameMessage(`Tempo Esgotado!`); }}
-        function updateUI() { scoreEl.textContent = `Pontos: ${score}`; deliveriesInfoEl.textContent = `Equipamentos: ${equipmentCollected}`; }
+        function updateUI() { scoreEl.textContent = `Pontos: ${score}`; deliveriesInfoEl.textContent = `Itens: ${equipmentCollected}`; }
         
         async function showEndGameMessage(message) {
             if(gameOver) return;
@@ -720,7 +723,7 @@ if (randomChance < cakeChance) {
             cancelAnimationFrame(animationFrameId);
             clearInterval(timerInterval);
 
-            messageText.innerHTML = `${message} <br><br> Equipamentos: ${equipmentCollected} <br> Pontos: ${score}`;
+            messageText.innerHTML = `${message} <br><br> Itens: ${equipmentCollected} <br> Pontos: ${score}`;
             try {
                 const scores = await window.firebase.getScores();
                 if (scores.length < 5 || score > scores[scores.length - 1].score) {
@@ -866,7 +869,7 @@ if (randomChance < cakeChance) {
 				player.position.y < item.position.y + item.height && 
 				player.position.y + player.height > item.position.y) { 
                     item.collected = true; 
-                    const itemValue = itemScores[item.type] || 100; // valor padrão se não encontrar
+                    const itemValue = itemScores[item.type] || 0; // valor padrão se não encontrar
 					score += itemValue;
 					equipmentCollected++; 
 					updateUI();
@@ -877,7 +880,7 @@ if (randomChance < cakeChance) {
 					x: item.position.x,
 					y: item.position.y - 10,
 					opacity: 1,
-					color: '#00FF00' // Verde
+					color: itemValue > 0 ? '#00FF00' : '#FF0000' // Verde para pontos, vermelho para 0
 				});
 					// 💬 BALÃO DE FALA:
 					if (item.type === 'cake') {
@@ -1038,6 +1041,7 @@ if (randomChance < cakeChance) {
   document.addEventListener("DOMContentLoaded", function () {
     const gameItems = [
       { nome: "Bobina de Drop", pontos: 100, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/bobina%20de%20drop%20pixel%20art.png" },
+      { nome: "Bobina Vazia", pontos: 0, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/refs/heads/main/Divaldo%20Bross/img/bobina%20de%20drop%20basia.png" },
       { nome: "Roteador", pontos: 150, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/ROTEADOR.png" },
       { nome: "Caixa de fiber", pontos: 200, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/caixa%20fiber.png" },
       { nome: "Bolo da moça (item raro)", pontos: 500, imagem: "https://raw.githubusercontent.com/ronaldomelo116/divaldo-bross/main/Divaldo%20Bross/img/bolo%20da%20moça.png" },
